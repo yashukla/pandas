@@ -277,9 +277,9 @@ class _Concatenator:
     ):
         if isinstance(objs, (NDFrame, str)):
             raise TypeError(
-                "first argument must be an iterable of pandas "
-                "objects, you passed an object of type "
-                '"{name}"'.format(name=type(objs).__name__)
+                f"first argument must be an iterable of pandas "
+                f"objects, you passed an object of type "
+                f'"{type(objs).__name__}"'
             )
 
         if join == "outer":
@@ -324,8 +324,8 @@ class _Concatenator:
         for obj in objs:
             if not isinstance(obj, (Series, DataFrame)):
                 msg = (
-                    "cannot concatenate object of type '{typ}';"
-                    " only Series and DataFrame objs are valid".format(typ=type(obj))
+                    f"cannot concatenate object of type '{type(obj)}';"
+                    " only Series and DataFrame objs are valid"
                 )
                 raise TypeError(msg)
 
@@ -375,8 +375,7 @@ class _Concatenator:
         self._is_series = isinstance(sample, Series)
         if not 0 <= axis <= sample.ndim:
             raise AssertionError(
-                "axis must be between 0 and {ndim}, input was"
-                " {axis}".format(ndim=sample.ndim, axis=axis)
+                f"axis must be between 0 and {sample.ndim}, input was" f" {axis}"
             )
 
         # if we have mixed ndims, then convert to highest ndim
@@ -506,8 +505,7 @@ class _Concatenator:
 
             if len(self.join_axes) != ndim - 1:
                 raise AssertionError(
-                    "length of join_axes must be equal "
-                    "to {length}".format(length=ndim - 1)
+                    f"length of join_axes must be equal " f"to {ndim - 1}"
                 )
 
             # ufff...
@@ -528,7 +526,7 @@ class _Concatenator:
             )
         except IndexError:
             types = [type(x).__name__ for x in self.objs]
-            raise TypeError("Cannot concatenate list of {types}".format(types=types))
+            raise TypeError(f"Cannot concatenate list of {types}")
 
     def _get_concat_axis(self):
         """
@@ -547,8 +545,8 @@ class _Concatenator:
                 for i, x in enumerate(self.objs):
                     if not isinstance(x, Series):
                         raise TypeError(
-                            "Cannot concatenate type 'Series' "
-                            "with object of type {type!r}".format(type=type(x).__name__)
+                            f"Cannot concatenate type 'Series' "
+                            f"with object of type {type(x).__name__!r}"
                         )
                     if x.name is not None:
                         names[i] = x.name
@@ -584,10 +582,7 @@ class _Concatenator:
         if self.verify_integrity:
             if not concat_index.is_unique:
                 overlap = concat_index[concat_index.duplicated()].unique()
-                raise ValueError(
-                    "Indexes have overlapping values: "
-                    "{overlap!s}".format(overlap=overlap)
-                )
+                raise ValueError(f"Indexes have overlapping values: " f"{overlap!s}")
 
 
 def _concat_indexes(indexes) -> Index:
@@ -629,11 +624,7 @@ def _make_concat_multiindex(indexes, keys, levels=None, names=None) -> MultiInde
                 try:
                     i = level.get_loc(key)
                 except KeyError:
-                    raise ValueError(
-                        "Key {key!s} not in level {level!s}".format(
-                            key=key, level=level
-                        )
-                    )
+                    raise ValueError(f"Key {key!s} not in level {level!s}")
 
                 to_concat.append(np.repeat(i, len(index)))
             codes_list.append(np.concatenate(to_concat))
@@ -685,11 +676,7 @@ def _make_concat_multiindex(indexes, keys, levels=None, names=None) -> MultiInde
 
         mask = mapped == -1
         if mask.any():
-            raise ValueError(
-                "Values not found in passed level: {hlevel!s}".format(
-                    hlevel=hlevel[mask]
-                )
-            )
+            raise ValueError(f"Values not found in passed level: {hlevel[mask]!s}")
 
         new_codes.append(np.repeat(mapped, n))
 
